@@ -1,0 +1,22 @@
+{
+  "id": "cream-100days",
+  "name": "奶油系百日照",
+  "description": "干净、柔和、影楼感强，适合满月和百日纪念。",
+  "ageRange": [0, 6],
+  "tags": ["百日照", "奶油风", "棚拍", "柔光"],
+  "defaultParams": {
+    "fidelity": 88,
+    "mood": "柔和",
+    "backgroundComplexity": 18,
+    "propLevel": 20,
+    "aspectRatio": "4:5",
+    "outputCount": 4
+  },
+  "promptFragments": {
+    "subject": "a baby portrait with soft natural baby proportions",
+    "scene": "soft cream studio backdrop, minimal premium baby photography scene",
+    "styling": "soft knitwear, premium and delicate baby styling",
+    "lighting": "diffused studio lighting, creamy highlights, soft shadows",
+    "composition": "close-up and half-body baby portrait"
+  }
+}

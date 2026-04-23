@@ -1,0 +1,22 @@
+{
+  "id": "moon-dream",
+  "name": "月亮梦境风",
+  "description": "云朵、月亮、柔光，适合低龄宝宝梦境写真。",
+  "ageRange": [0, 8],
+  "tags": ["月亮", "梦境", "云朵", "柔和"],
+  "defaultParams": {
+    "fidelity": 84,
+    "mood": "梦幻",
+    "backgroundComplexity": 46,
+    "propLevel": 38,
+    "aspectRatio": "4:5",
+    "outputCount": 4
+  },
+  "promptFragments": {
+    "subject": "a baby portrait with soft, sweet facial expression and natural baby form",
+    "scene": "moon and cloud dreamscape, calm pastel sky, soft floating elements",
+    "styling": "soft sleepwear or dreamy knit baby outfit",
+    "lighting": "soft moonlit pastel glow with gentle studio polish",
+    "composition": "dreamy close-up or half-body portrait"
+  }
+}

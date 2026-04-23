@@ -1,0 +1,22 @@
+{
+  "id": "forest-fairy",
+  "name": "森林童话风",
+  "description": "自然、梦幻、故事感强，适合稍大一点的宝宝。",
+  "ageRange": [4, 18],
+  "tags": ["森林", "童话", "梦幻", "自然"],
+  "defaultParams": {
+    "fidelity": 80,
+    "mood": "梦幻",
+    "backgroundComplexity": 72,
+    "propLevel": 68,
+    "aspectRatio": "4:5",
+    "outputCount": 4
+  },
+  "promptFragments": {
+    "subject": "a baby portrait preserving baby identity and natural proportions",
+    "scene": "storybook forest setting with soft greenery, tiny mushrooms, magical but tasteful details",
+    "styling": "gentle fantasy baby styling with soft textures",
+    "lighting": "misty morning light, soft magical glow",
+    "composition": "environmental baby portrait with storytelling depth"
+  }
+}

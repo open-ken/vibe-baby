@@ -1,0 +1,22 @@
+{
+  "id": "birthday-party",
+  "name": "生日派对风",
+  "description": "适合周岁或庆祝纪念，氛围热闹但仍然克制。",
+  "ageRange": [9, 18],
+  "tags": ["生日", "周岁", "庆祝", "派对"],
+  "defaultParams": {
+    "fidelity": 78,
+    "mood": "节日",
+    "backgroundComplexity": 62,
+    "propLevel": 70,
+    "aspectRatio": "4:5",
+    "outputCount": 4
+  },
+  "promptFragments": {
+    "subject": "a joyful baby portrait with natural baby identity preserved",
+    "scene": "tasteful birthday setup with balloons, cake-inspired decor, and soft festive details",
+    "styling": "cute celebratory baby outfit, joyful but refined",
+    "lighting": "bright cheerful light with soft studio balance",
+    "composition": "playful half-body or seated celebration portrait"
+  }
+}

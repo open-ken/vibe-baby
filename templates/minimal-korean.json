@@ -1,0 +1,22 @@
+{
+  "id": "minimal-korean",
+  "name": "极简韩系风",
+  "description": "高级、简洁、偏韩系棚拍审美。",
+  "ageRange": [0, 12],
+  "tags": ["韩系", "极简", "高级", "棚拍"],
+  "defaultParams": {
+    "fidelity": 90,
+    "mood": "高级",
+    "backgroundComplexity": 10,
+    "propLevel": 10,
+    "aspectRatio": "4:5",
+    "outputCount": 4
+  },
+  "promptFragments": {
+    "subject": "a refined baby portrait with faithful baby likeness",
+    "scene": "minimal studio background, clean and elegant composition",
+    "styling": "simple premium baby outfit with refined styling",
+    "lighting": "clean soft studio light with polished editorial finish",
+    "composition": "centered studio portrait with minimal distractions"
+  }
+}

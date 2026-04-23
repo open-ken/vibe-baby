@@ -1,0 +1,22 @@
+{
+  "id": "vintage-storybook",
+  "name": "复古绘本风",
+  "description": "有叙事感，适合做成长纪念型写真。",
+  "ageRange": [4, 18],
+  "tags": ["复古", "绘本", "故事感", "叙事"],
+  "defaultParams": {
+    "fidelity": 76,
+    "mood": "温暖",
+    "backgroundComplexity": 58,
+    "propLevel": 54,
+    "aspectRatio": "3:4",
+    "outputCount": 4
+  },
+  "promptFragments": {
+    "subject": "a baby portrait with soft realistic likeness and storybook charm",
+    "scene": "warm vintage storybook room or illustrated nostalgic set",
+    "styling": "soft classic baby clothing with retro-inspired details",
+    "lighting": "warm cinematic soft light, nostalgic and gentle",
+    "composition": "storybook portrait with rich but controlled scene detail"
+  }
+}

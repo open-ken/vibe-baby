@@ -1,0 +1,22 @@
+{
+  "id": "pastel-bedtime",
+  "name": "马卡龙睡梦风",
+  "description": "安静、治愈、低刺激，适合低龄宝宝。",
+  "ageRange": [0, 6],
+  "tags": ["睡梦", "马卡龙", "柔和", "安静"],
+  "defaultParams": {
+    "fidelity": 88,
+    "mood": "温暖",
+    "backgroundComplexity": 16,
+    "propLevel": 14,
+    "aspectRatio": "3:4",
+    "outputCount": 4
+  },
+  "promptFragments": {
+    "subject": "a calm baby portrait with highly preserved baby identity",
+    "scene": "pastel bedtime scene with minimal blankets and soft pillows",
+    "styling": "gentle baby sleepwear, soft cotton textures",
+    "lighting": "warm diffused soft light, cozy bedtime tone",
+    "composition": "close-up portrait focused on peaceful baby expression"
+  }
+}

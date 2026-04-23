@@ -1,0 +1,22 @@
+{
+  "id": "christmas-wonderland",
+  "name": "圣诞奇境风",
+  "description": "节日限定，适合冬季庆典写真。",
+  "ageRange": [6, 18],
+  "tags": ["圣诞", "节日", "奇境", "红绿"],
+  "defaultParams": {
+    "fidelity": 76,
+    "mood": "节日",
+    "backgroundComplexity": 74,
+    "propLevel": 72,
+    "aspectRatio": "4:5",
+    "outputCount": 4
+  },
+  "promptFragments": {
+    "subject": "a festive baby portrait preserving baby identity",
+    "scene": "tasteful christmas wonderland with soft lights, ornaments, and cozy seasonal details",
+    "styling": "holiday baby outfit, warm and cute but elegant",
+    "lighting": "warm festive glow with soft depth and polished highlights",
+    "composition": "celebratory seasonal portrait with clear baby focus"
+  }
+}

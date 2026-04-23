@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VibeBaby Studio</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="ambient-layer" aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <header class="topbar glass-card">
+      <div>
+        <p class="eyebrow">VibeBaby · Parametric Portrait Studio</p>
+        <h1>VibeBaby 儿童摄影工作台</h1>
+        <p class="subtitle">用人话参数快速配置风格，先输出结构化 Prompt JSON，后续可无缝接入生成能力。</p>
+      </div>
+      <div class="topbar-actions">
+        <button id="saveBtn" class="btn ghost">保存本地配置</button>
+        <button id="resetBtn" class="btn ghost">重置</button>
+      </div>
+    </header>
+
+    <main class="studio-layout">
+      <aside class="panel-stack">
+        <section class="glass-card card">
+          <h2>1. 选择模板</h2>
+          <label class="field">
+            <span>模板列表</span>
+            <select id="templateSelect"></select>
+          </label>
+          <div id="templateMeta" class="template-meta"></div>
+        </section>
+
+        <section class="glass-card card">
+          <h2>2. 宝宝信息</h2>
+          <label class="field">
+            <span>月龄</span>
+            <input id="ageMonths" type="number" min="0" max="36" value="3" />
+          </label>
+
+          <label class="field">
+            <span>上传参考照</span>
+            <input id="photoInput" type="file" accept="image/*" />
+          </label>
+
+          <div class="preview-box">
+            <img id="photoPreview" alt="参考照预览" />
+            <div id="previewPlaceholder" class="placeholder">尚未上传参考照</div>
+          </div>
+        </section>
+      </aside>
+
+      <section class="panel-stack">
+        <section class="glass-card card">
+          <h2>3. 人话参数控制</h2>
+
+          <label class="field">
+            <span>像本人程度</span>
+            <div class="range-row">
+              <input id="fidelity" type="range" min="0" max="100" value="85" />
+              <strong id="fidelityValue" class="metric-pill">85</strong>
+            </div>
+            <small id="fidelityHint" class="hint"></small>
+          </label>
+
+          <label class="field">
+            <span>画面氛围</span>
+            <select id="mood">
+              <option value="柔和">柔和</option>
+              <option value="明亮">明亮</option>
+              <option value="梦幻">梦幻</option>
+              <option value="高级">高级</option>
+              <option value="温暖">温暖</option>
+              <option value="节日">节日</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>背景复杂度</span>
+            <div class="range-row">
+              <input id="backgroundComplexity" type="range" min="0" max="100" value="20" />
+              <strong id="backgroundValue" class="metric-pill">20</strong>
+            </div>
+            <small id="backgroundHint" class="hint"></small>
+          </label>
+
+          <label class="field">
+            <span>道具丰富度</span>
+            <div class="range-row">
+              <input id="propLevel" type="range" min="0" max="100" value="20" />
+              <strong id="propValue" class="metric-pill">20</strong>
+            </div>
+            <small id="propHint" class="hint"></small>
+          </label>
+
+          <div class="inline-fields">
+            <label class="field">
+              <span>输出比例</span>
+              <select id="aspectRatio">
+                <option value="4:5">4:5 竖版</option>
+                <option value="3:4">3:4 经典</option>
+                <option value="1:1">1:1 方图</option>
+                <option value="16:9">16:9 宽画幅</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>输出张数</span>
+              <select id="outputCount">
+                <option value="4">4 张</option>
+                <option value="6">6 张</option>
+                <option value="8">8 张</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="field">
+            <span>补充备注</span>
+            <textarea id="notes" rows="4" placeholder="例如：想更干净一点，色彩偏奶油，避免复杂背景。"></textarea>
+          </label>
+
+          <div class="actions">
+            <button id="generateBtn" class="btn primary">更新结构化 Prompt</button>
+          </div>
+        </section>
+
+        <section class="glass-card card">
+          <h2>4. 预览输出位</h2>
+          <div id="resultGrid" class="result-grid"></div>
+        </section>
+      </section>
+
+      <aside class="panel-stack">
+        <section class="glass-card card">
+          <h2>当前摘要</h2>
+          <div id="summaryBox" class="summary-box"></div>
+        </section>
+
+        <section class="glass-card card">
+          <h2>结构化 Prompt JSON</h2>
+          <pre id="promptOutput" class="json-box">{}</pre>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
