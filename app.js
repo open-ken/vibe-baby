@@ -1,3 +1,11 @@
+const {
+  HUMAN_KEYS,
+  labelByLevel,
+  getTemplateFit,
+  buildPromptPayload: buildCorePromptPayload,
+  buildGptPastePrompt
+} = window.VibeBabyCore;
+
 const templateSelect = document.getElementById("templateSelect");
 const templateMeta = document.getElementById("templateMeta");
 const photoInput = document.getElementById("photoInput");
@@ -23,9 +31,11 @@ const propHint = document.getElementById("propHint");
 
 const promptOutput = document.getElementById("promptOutput");
 const summaryBox = document.getElementById("summaryBox");
+const statusBox = document.getElementById("statusBox");
 const resultGrid = document.getElementById("resultGrid");
 
 const generateBtn = document.getElementById("generateBtn");
+const copyPromptBtn = document.getElementById("copyPromptBtn");
 const saveBtn = document.getElementById("saveBtn");
 const resetBtn = document.getElementById("resetBtn");
 
@@ -44,12 +54,6 @@ const FALLBACK_TEMPLATE_FILES = [
 let templates = [];
 let currentPhotoName = "";
 let currentPhotoUrl = "";
-
-function labelByLevel(n, low, mid, high) {
-  if (n <= 33) return low;
-  if (n <= 66) return mid;
-  return high;
-}
 
 function getAspectRatioValue(ratio) {
   const map = {
@@ -112,16 +116,29 @@ function loadSavedState() {
   }
 }
 
+function getCurrentControls() {
+  return {
+    ageMonths: Number(ageMonthsInput.value || 0),
+    fidelity: Number(fidelityInput.value || 0),
+    mood: moodInput.value,
+    backgroundComplexity: Number(backgroundInput.value || 0),
+    propLevel: Number(propInput.value || 0),
+    aspectRatio: aspectRatioInput.value,
+    outputCount: Number(outputCountInput.value || 4),
+    notes: notesInput.value.trim()
+  };
+}
+
 function saveState() {
   const payload = buildPromptPayload();
   const state = {
     templateId: payload.template.id,
     ageMonths: payload.input.ageMonths,
-    fidelity: payload.parameters.humanReadable["像本人程度"].value,
-    mood: payload.parameters.humanReadable["画面氛围"],
-    backgroundComplexity: payload.parameters.humanReadable["背景复杂度"].value,
-    propLevel: payload.parameters.humanReadable["道具丰富度"].value,
-    aspectRatio: payload.parameters.humanReadable["输出比例"],
+    fidelity: payload.parameters.humanReadable[HUMAN_KEYS.fidelity].value,
+    mood: payload.parameters.humanReadable[HUMAN_KEYS.mood],
+    backgroundComplexity: payload.parameters.humanReadable[HUMAN_KEYS.backgroundComplexity].value,
+    propLevel: payload.parameters.humanReadable[HUMAN_KEYS.propLevel].value,
+    aspectRatio: payload.parameters.humanReadable[HUMAN_KEYS.aspectRatio],
     outputCount: payload.output.count,
     notes: payload.input.notes
   };
@@ -190,157 +207,63 @@ function renderTemplateMeta() {
 
   const tags = Array.isArray(template.tags) ? template.tags : [];
   const [minAge, maxAge] = template.ageRange || [0, 24];
+  const fit = getTemplateFit(template, Number(ageMonthsInput.value || 0));
 
   templateMeta.innerHTML = `
     <div class="template-title">${template.name}</div>
     <p>${template.description}</p>
-    <p>推荐月龄：${minAge}-${maxAge} 月</p>
+    <p>推荐月龄：${minAge}-${maxAge} 个月</p>
+    <p class="fit-note ${fit.level}">${fit.label}：${fit.message}</p>
     <div class="tag-row">${tags.map(tag => `<span class="tag">${tag}</span>`).join("")}</div>
   `;
 }
 
-function inferIdentityPrompt(fidelity) {
-  if (fidelity <= 30) return "loosely inspired by the baby reference photo";
-  if (fidelity <= 60) return "preserve major facial traits from the baby reference photo";
-  if (fidelity <= 85) return "strongly preserve facial identity and baby likeness from the reference photo";
-  return "preserve facial identity, baby likeness, proportions, and key facial details as faithfully as possible";
-}
-
-function inferMoodPrompt(mood) {
-  const map = {
-    "柔和": "soft, gentle, delicate, diffused light",
-    "明亮": "bright, airy, clean highlights",
-    "梦幻": "dreamy, whimsical, magical softness",
-    "高级": "premium, editorial, refined, polished",
-    "温暖": "warm, cozy, intimate",
-    "节日": "festive, celebratory, joyful"
-  };
-  return map[mood] || map["柔和"];
-}
-
-function inferBackgroundPrompt(value) {
-  if (value <= 30) return "minimal clean background with very low clutter";
-  if (value <= 60) return "styled but controlled background with balanced scene detail";
-  return "rich scenic background with stronger environmental storytelling";
-}
-
-function inferPropPrompt(value) {
-  if (value <= 30) return "minimal props only";
-  if (value <= 60) return "a few tasteful props";
-  return "richer storytelling props while keeping the baby as the visual focus";
-}
-
-function getAgeDirection(ageMonths) {
-  if (ageMonths <= 3) {
-    return {
-      stage: "newborn",
-      composition: "close-up or half-body newborn portrait",
-      pose: "lying down or gently supported safe pose",
-      note: "优先柔和包裹感，避免复杂动作"
-    };
-  }
-
-  if (ageMonths <= 8) {
-    return {
-      stage: "infant",
-      composition: "supported sitting or half-body playful portrait",
-      pose: "gentle supported sitting or tummy-time style pose",
-      note: "强调自然互动，保持安全稳定"
-    };
-  }
-
-  return {
-    stage: "older-baby",
-    composition: "environmental portrait or playful half-body portrait",
-    pose: "active joyful seated or naturally playful pose",
-    note: "可加入成长纪念与节日叙事感"
-  };
-}
-
 function buildPromptPayload() {
   const template = getSelectedTemplate();
-  const ageMonths = Number(ageMonthsInput.value || 0);
-  const fidelity = Number(fidelityInput.value || 0);
-  const mood = moodInput.value;
-  const backgroundComplexity = Number(backgroundInput.value || 0);
-  const propLevel = Number(propInput.value || 0);
-  const aspectRatio = aspectRatioInput.value;
-  const outputCount = Number(outputCountInput.value || 4);
-  const notes = notesInput.value.trim();
-  const ageDirection = getAgeDirection(ageMonths);
+  const controls = getCurrentControls();
 
-  return {
-    version: "1.0",
-    generatedAt: new Date().toISOString(),
-    mode: "prompt-json-only",
-    template: {
-      id: template.id,
-      name: template.name,
-      description: template.description,
-      tags: template.tags,
-      ageRange: template.ageRange
-    },
-    input: {
-      ageMonths,
+  return buildCorePromptPayload({
+    template,
+    controls,
+    photo: {
       hasUploadedPhoto: Boolean(currentPhotoUrl),
-      uploadedPhotoName: currentPhotoName || "",
-      notes
+      uploadedPhotoName: currentPhotoName
     },
-    parameters: {
-      humanReadable: {
-        "像本人程度": {
-          value: fidelity,
-          meaning: fidelityHint.textContent
-        },
-        "画面氛围": mood,
-        "背景复杂度": {
-          value: backgroundComplexity,
-          meaning: backgroundHint.textContent
-        },
-        "道具丰富度": {
-          value: propLevel,
-          meaning: propHint.textContent
-        },
-        "输出比例": aspectRatio
-      },
-      inferredPromptControls: {
-        identityPrompt: inferIdentityPrompt(fidelity),
-        moodPrompt: inferMoodPrompt(mood),
-        backgroundPrompt: inferBackgroundPrompt(backgroundComplexity),
-        propPrompt: inferPropPrompt(propLevel),
-        ageDirection
-      }
-    },
-    promptBlocks: {
-      subjectPrompt: template.promptFragments.subject,
-      scenePrompt: `${template.promptFragments.scene}; ${inferBackgroundPrompt(backgroundComplexity)}`,
-      stylingPrompt: `${template.promptFragments.styling}; ${inferPropPrompt(propLevel)}`,
-      lightingPrompt: `${template.promptFragments.lighting}; ${inferMoodPrompt(mood)}`,
-      compositionPrompt: `${template.promptFragments.composition}; ${ageDirection.composition}; pose: ${ageDirection.pose}`,
-      identityPrompt: inferIdentityPrompt(fidelity),
-      safetyPrompt: "age-appropriate baby portrait, natural baby proportions, safe pose, no adult-like styling",
-      negativePrompt: "adult face, mature styling, unsafe props, harsh shadows, cluttered composition, distorted anatomy"
-    },
-    output: {
-      count: outputCount,
-      aspectRatio,
-      placeholdersOnly: true
-    },
-    nextStep: "connect generateWithOpenAI(payload) when generation API is ready"
-  };
+    hints: {
+      fidelity: fidelityHint.textContent,
+      background: backgroundHint.textContent,
+      prop: propHint.textContent
+    }
+  });
+}
+
+function renderStatus(payload) {
+  const fit = payload.template.fit;
+  const photoReadiness = payload.input.photoReadiness;
+
+  statusBox.innerHTML = `
+    <div class="status-item ${fit.level}">
+      <strong>${fit.label}</strong>
+      <span>${fit.message}</span>
+    </div>
+    <div class="status-item ${photoReadiness.level}">
+      <strong>${photoReadiness.label}</strong>
+      <span>${photoReadiness.message}</span>
+    </div>
+  `;
 }
 
 function renderSummary(payload = buildPromptPayload()) {
   summaryBox.innerHTML = `
     <div><strong>模板</strong><span>${payload.template.name}</span></div>
     <div><strong>月龄</strong><span>${payload.input.ageMonths} 个月</span></div>
-    <div><strong>像本人程度</strong><span>${payload.parameters.humanReadable["像本人程度"].value}</span></div>
-    <div><strong>画面氛围</strong><span>${payload.parameters.humanReadable["画面氛围"]}</span></div>
-    <div><strong>背景复杂度</strong><span>${payload.parameters.humanReadable["背景复杂度"].value}</span></div>
-    <div><strong>道具丰富度</strong><span>${payload.parameters.humanReadable["道具丰富度"].value}</span></div>
+    <div><strong>像本人程度</strong><span>${payload.parameters.humanReadable[HUMAN_KEYS.fidelity].value}</span></div>
+    <div><strong>画面氛围</strong><span>${payload.parameters.humanReadable[HUMAN_KEYS.mood]}</span></div>
+    <div><strong>背景复杂度</strong><span>${payload.parameters.humanReadable[HUMAN_KEYS.backgroundComplexity].value}</span></div>
+    <div><strong>道具丰富度</strong><span>${payload.parameters.humanReadable[HUMAN_KEYS.propLevel].value}</span></div>
     <div><strong>输出比例</strong><span>${payload.output.aspectRatio}</span></div>
     <div><strong>输出张数</strong><span>${payload.output.count} 张</span></div>
-    <div><strong>已上传参考照</strong><span>${payload.input.hasUploadedPhoto ? "是" : "否"}</span></div>
+    <div><strong>参考照</strong><span>${payload.input.photoReadiness.label}</span></div>
   `;
 }
 
@@ -362,6 +285,8 @@ function renderPlaceholders(count = Number(outputCountInput.value || 4), ratio =
 function renderPrompt() {
   const payload = buildPromptPayload();
   promptOutput.textContent = JSON.stringify(payload, null, 2);
+  renderTemplateMeta();
+  renderStatus(payload);
   renderSummary(payload);
   renderPlaceholders(payload.output.count, payload.output.aspectRatio);
 }
@@ -376,6 +301,7 @@ function resetState() {
     URL.revokeObjectURL(currentPhotoUrl);
   }
   currentPhotoUrl = "";
+  photoInput.value = "";
   photoPreview.src = "";
   photoPreview.style.display = "none";
   previewPlaceholder.style.display = "flex";
@@ -383,6 +309,27 @@ function resetState() {
   applyTemplateDefaults();
   renderTemplateMeta();
   renderPrompt();
+}
+
+async function copyPromptJson() {
+  const pastePrompt = buildGptPastePrompt(buildPromptPayload());
+
+  try {
+    await navigator.clipboard.writeText(pastePrompt);
+    copyPromptBtn.textContent = "已复制";
+  } catch {
+    promptOutput.textContent = pastePrompt;
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.selectNodeContents(promptOutput);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    copyPromptBtn.textContent = "已选中";
+  }
+
+  window.setTimeout(() => {
+    copyPromptBtn.textContent = "复制给 GPT";
+  }, 1200);
 }
 
 async function generateWithOpenAI(promptPayload) {
@@ -408,7 +355,6 @@ photoInput.addEventListener("change", event => {
 
 templateSelect.addEventListener("change", () => {
   applyTemplateDefaults();
-  renderTemplateMeta();
   renderPrompt();
 });
 
@@ -435,6 +381,8 @@ generateBtn.addEventListener("click", async () => {
   renderPrompt();
   await generateWithOpenAI(payload);
 });
+
+copyPromptBtn.addEventListener("click", copyPromptJson);
 
 saveBtn.addEventListener("click", () => {
   saveState();

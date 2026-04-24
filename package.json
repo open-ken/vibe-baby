@@ -1,0 +1,9 @@
+{
+  "name": "vibebaby",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "check": "node --check app-core.js && node --check app.js && node --check tests/app-core.test.js && node tests/app-core.test.js",
+    "test": "node tests/app-core.test.js"
+  }
+}

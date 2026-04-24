@@ -17,6 +17,7 @@
         <p class="subtitle">用人话参数快速配置风格，先输出结构化 Prompt JSON，后续可无缝接入生成能力。</p>
       </div>
       <div class="topbar-actions">
+        <button id="copyPromptBtn" class="btn ghost">复制给 GPT</button>
         <button id="saveBtn" class="btn ghost">保存本地配置</button>
         <button id="resetBtn" class="btn ghost">重置</button>
       </div>
@@ -135,6 +136,7 @@
       <aside class="panel-stack">
         <section class="glass-card card">
           <h2>当前摘要</h2>
+          <div id="statusBox" class="status-box"></div>
           <div id="summaryBox" class="summary-box"></div>
         </section>
 
@@ -146,6 +148,7 @@
     </main>
   </div>
 
+  <script src="./app-core.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>
