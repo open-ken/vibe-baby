@@ -54,6 +54,7 @@ vercel --prod
 ```text
 .
 |-- studio.html
+|-- index.html
 |-- styles.css
 |-- app.js
 |-- app-core.js
